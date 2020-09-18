@@ -67,7 +67,7 @@ typedef enum {
 } fr_tls_status_t;
 extern FR_NAME_NUMBER const fr_tls_status_table[];
 
-#define MAX_RECORD_SIZE 16384
+#define MAX_RECORD_SIZE (16384*2)
 
 /*
  *	A single TLS record may be up to 16384 octets in length, but a
@@ -380,6 +380,7 @@ struct fr_tls_server_conf_t {
 	X509_STORE	*old_x509_store;
 	char const	*check_cert_cn;
 	char const	*cipher_list;
+	char const	*curves_list;
 	bool		cipher_server_preference;
 	char const	*check_cert_issuer;
 

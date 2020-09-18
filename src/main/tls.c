@@ -1334,6 +1334,7 @@ static CONF_PARSER tls_server_config[] = {
 	{ "allow_expired_crl", FR_CONF_OFFSET(PW_TYPE_BOOLEAN, fr_tls_server_conf_t, allow_expired_crl), NULL },
 	{ "check_cert_cn", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, check_cert_cn), NULL },
 	{ "cipher_list", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, cipher_list), NULL },
+	{ "curves_list", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, curves_list), NULL },
 	{ "cipher_server_preference", FR_CONF_OFFSET(PW_TYPE_BOOLEAN, fr_tls_server_conf_t, cipher_server_preference), NULL },
 	{ "check_cert_issuer", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, check_cert_issuer), NULL },
 	{ "require_client_cert", FR_CONF_OFFSET(PW_TYPE_BOOLEAN, fr_tls_server_conf_t, require_client_cert), NULL },
@@ -1390,6 +1391,7 @@ static CONF_PARSER tls_client_config[] = {
 	{ "check_crl", FR_CONF_OFFSET(PW_TYPE_BOOLEAN, fr_tls_server_conf_t, check_crl), "no" },
 	{ "check_cert_cn", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, check_cert_cn), NULL },
 	{ "cipher_list", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, cipher_list), NULL },
+	{ "curves_list", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, curves_list), NULL },
 	{ "check_cert_issuer", FR_CONF_OFFSET(PW_TYPE_STRING, fr_tls_server_conf_t, check_cert_issuer), NULL },
 	{ "ca_path_reload_interval", FR_CONF_OFFSET(PW_TYPE_INTEGER, fr_tls_server_conf_t, ca_path_reload_interval), "0" },
 
@@ -3541,6 +3543,12 @@ post_ca:
 	if (conf->cipher_list) {
 		if (!SSL_CTX_set_cipher_list(ctx, conf->cipher_list)) {
 			tls_error_log(NULL, "Failed setting cipher list");
+			return NULL;
+		}
+	}
+	if (conf->curves_list) {
+		if (!SSL_CTX_set1_curves_list(ctx, conf->curves_list)) {
+			tls_error_log(NULL, "Failed setting curves list");
 			return NULL;
 		}
 	}
